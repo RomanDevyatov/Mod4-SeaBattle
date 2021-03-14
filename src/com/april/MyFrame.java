@@ -10,7 +10,7 @@ public class MyFrame extends JFrame {
         cont.add(pan);
 
         setTitle("Игра \"Морской бой\"");
-        setBounds(0, 0, 1800, 650);
+        setBounds(0, 0, 900,600);
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

@@ -10,12 +10,17 @@ public class Game {
         this.masPlayer = new int[10][10];
     }
 
+    public int getFieldValueAt(int x, int y) {
+        return this.masPlayer[y][x];
+    }
+
     private int[] makeShot() {
         int i = (int) (Math.random() * 10);
         int j = (int) (Math.random() * 10);
         int[] mas = new int[2];
         mas[0] = i;
         mas[1] = j;
+
         return mas;
     }
 
@@ -26,7 +31,6 @@ public class Game {
     public void start() {
         for (int i = 0; i < masComp.length; i++) {
             for (int k = 0; k < masPlayer.length; k++) {
-                masComp[i][k] = 0;
                 masPlayer[i][k] = 0;
             }
         }
