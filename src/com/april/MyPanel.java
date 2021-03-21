@@ -22,6 +22,7 @@ public class MyPanel extends JPanel {
 
     public MyPanel() {
         this.game = new Game();
+        this.game.start();
         try {
             this.fon = ImageIO.read(new File("C:\\Users\\r.devyatov\\IDEAprojects\\april\\SeaBattle\\img\\fon.jpg"));
             this.paluba = ImageIO.read(new File("C:\\Users\\r.devyatov\\IDEAprojects\\april\\SeaBattle\\img\\paluba.png"));
@@ -84,13 +85,15 @@ public class MyPanel extends JPanel {
         gr.drawString("Computer", 150, 50);
         gr.drawString("Player", 590, 50);
 
-        for (int i = 0; i <= 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                if (game.getFieldValueAt(i, j) >= 1 &&  game.getFieldValueAt(i, j) <= 4) {
-                    gr.drawImage(paluba, 500 + j * 30, 100 + i * 30, 30, 30 ,null);
+        for (int i = 0; i < 10; i++) {
+            for (int p = 0; p < 10; p++) {
+                if (this.game.getFieldValueAt(i, p) >= 1 &&  this.game.getFieldValueAt(i, p) <= 4) {
+                        gr.drawImage(paluba, 500 + p * 30, 100 + i * 30, 30, 30, null);
                 }
             }
-
+        }
+        gr.setColor(Color.BLUE);
+        for (int i = 0; i <= 10; i++) {
             gr.drawLine(100 + i * 30, 100, 100 + i * 30, 400);
             gr.drawLine(100, 100 + i * 30, 400, 100 + i * 30);
 
@@ -109,9 +112,13 @@ public class MyPanel extends JPanel {
             gr.drawString(String.valueOf((char)('A' + i - 1)), 478 + i * 30, 93);
         }
 
-
-
-        //gr.drawString("Hello!", 100, 200);
-
     }
 }
+
+
+
+//            for (int j = 0; j < 10; j++) {
+//                if (game.getFieldValueAt(i, j) >= 1 &&  game.getFieldValueAt(i, j) <= 4) {
+//                    gr.drawImage(paluba, 500 + j * 30, 100 + i * 30, 30, 30 ,null);
+//                }
+//            }
