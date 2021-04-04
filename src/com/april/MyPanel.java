@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 
-public class MyPanel extends JPanel  {
+public class MyPanel extends JPanel {
     public Game game;
     private Timer tmDraw;
     private Image
@@ -78,8 +78,6 @@ public class MyPanel extends JPanel  {
             }
         }
     }
-
-
 
     public MyPanel() {
         addMouseListener(new MyMouse1());
@@ -224,10 +222,4 @@ public class MyPanel extends JPanel  {
     }
 }
 
-
-
-//            for (int j = 0; j < 10; j++) {
-//                if (game.getFieldValueAt(i, j) >= 1 &&  game.getFieldValueAt(i, j) <= 4) {
-//                    gr.drawImage(paluba, 500 + j * 30, 100 + i * 30, 30, 30 ,null);
-//                }
-//            }
+   }

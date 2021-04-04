@@ -7,8 +7,6 @@ public class Game {
     private boolean compTurn;
     private int endg; // 0 - game goes on, 1 - player won, 2 - comp won
 
-
-
     public Game() {
         this.masComp = new int[10][10];
         this.masPlayer = new int[10][10];
@@ -45,6 +43,7 @@ public class Game {
         compTurn = false;
 
         placeSheeps(masPlayer);
+        placeSheeps(masComp);
     }
 
     private void placeSheeps(int[][] masPlayer) {
@@ -139,8 +138,55 @@ public class Game {
         okrEnd(mas);
     }
 
-    public void shotPlayer(int i, int j) {
+    public void shotPlayer(int j, int i) {
+        masComp[i][j] += 7;
+        testUbit(masComp, i, j);
+        testEndGame();
+        if (masComp[i][j] < 8) {
+            compTurn = true;
+            while (compTurn == true) {
+                compTurn = shootComp();
+            }
+        }
+    }
 
+    private void testUbit(int[][] mas, int i, int j) {
+        switch (mas[i][j]) {
+            case 8:
+                mas[i][j] += 7;
+                okrPodbit(mas, i, j);
+                break;
+            case 9:
+                analyzeUbit(mas, i, j, 2);
+                break;
+            case 10:
+                analyzeUbit(mas, i, j, 3);
+                break;
+            case 11:
+                analyzeUbit(mas, i, j, 4);
+                break;
+        }
+    }
+
+    private void analyzeUbit(int[][] mas, int i, int j, int kolPalub) {
+        int kolRanen = 0;
+        for (int k = i - (kolPalub - 1); k <= i + (kolPalub - 1); k++) {
+            for (int g = j - (kolPalub - 1); g <= j + (kolPalub - 1); g++) {
+                if (testMasPoz(k, g) && mas[k][g] == kolPalub + 7) {
+                    kolRanen++;
+                }
+            }
+        }
+        if (kolRanen == kolPalub) {
+            for (int k = i - (kolPalub - 1); k <= i + (kolPalub - 1); k++) {
+                for (int g = j - (kolPalub - 1); g <= j + (kolPalub - 1); g++) {
+                    if (testMasPoz(k, g) && mas[k][g] == kolPalub + 7) {
+                        mas[k][g] += 7;
+                        okrPodbit(mas, k, g);
+                    }
+                }
+            }
+        }
     }
 
     private void make4(int[][] mas) {
@@ -245,6 +291,81 @@ public class Game {
         }
     }
 
+    private void setOkrPodbit(int[][] mas, int i, int j) {
+        if (testMasPoz(i, j) == true){
+            if (mas[i][j] == -1 || mas[i][j] == 6) {
+                mas[i][j]--;
+            }
+        }
+    }
+
+    private void okrPodbit(int[][] mas, int i, int j) {
+        for (int k = i - 1; k < i + 2; k++) {
+            for (int s = j - 1; s < j + 2; s++) {
+                if (k != s) {
+                    setOkrPodbit(mas, k, s);
+                }
+            }
+        }
+    }
+
+    private boolean shootComp() {
+        boolean res = false;
+        boolean flag = false;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (masPlayer[i][j] >= 9 && masPlayer[i][j] <= 11) {
+                    flag = true;
+                    for (int k = i - 1; k < i + 2; k++) {
+                        for (int s = j - 1; s < j + 2; s++) {
+                            if (Math.abs(k - s) == 1 && testMasPoz(k, s) && masPlayer[k][s] <= 4 && masPlayer[k][s] != -2) {
+                                masPlayer[k][s] += 7;
+                                testUbit(masPlayer, k, s);
+                                if (masPlayer[k][s] >= 8) {
+                                    res = true;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!flag) {
+            for (int k = 1; k <= 100; k++) {
+                int i = (int) (Math.random() * 10);
+                int j = (int) (Math.random() * 10);
+                if (masPlayer[i][j] <= 4 && masPlayer[i][j] != -2) {
+                    masPlayer[i][j] += 7;
+                    testUbit(masPlayer, i, j);
+                    if (masPlayer[i][j] >= 8) {
+                        res = true;
+                    }
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                for (int i = 0; i < 10; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        if (masPlayer[i][j] <= 4 && masPlayer[i][j] != -2) {
+                            masPlayer[i][j] += 7;
+                            testUbit(masPlayer, i, j);
+                            if (masPlayer[i][j] >= 8) {
+                                res = true;
+                            }
+                            flag = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        testEndGame();
+        return res;
+    }
+
     private boolean testMasPoz(int i, int p) {
         if (i >= 0 && i <= 9 && p >= 0 && p <= 9) {
             return true;
@@ -261,6 +382,26 @@ public class Game {
         mas[1] = j;
 
         return mas;
+    }
+
+    private void testEndGame(){
+        int testNumber = 15 * 1 * 4 + 16 * 2 * 3 + 17 * 3 * 2 + 18 * 4 * 1; // ==330
+        int kolComp =0, kolPlayer = 0;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (masPlayer[i][j] >= 15) {
+                    kolPlayer += masPlayer[i][j];
+                }
+                if (masComp[i][j] >= 15) {
+                    kolComp += masComp[i][j];
+                }
+            }
+        }
+        if (kolPlayer == testNumber) {
+            endg = 2;
+        } else if (kolComp == testNumber) {
+            endg = 1;
+        }
     }
 
     private int getNapr() {
