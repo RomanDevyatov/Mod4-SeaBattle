@@ -38,7 +38,7 @@ public class MyPanel extends JPanel {
                     int j = (mX - 100) / 30;
 
                     if (game.getCompFieldValueAt(i, j) <= 4) {
-                        game.shotPlayer(i, j);
+                        game.shootPlayer(i, j);
                     }
                 }
             }
@@ -148,6 +148,7 @@ public class MyPanel extends JPanel {
         gr.drawString("Computer", 150, 50);
         gr.drawString("Player", 590, 50);
 
+        // отрисовка кораблей игрока
         for (int i = 0; i < 10; i++) {
             for (int p = 0; p < 10; p++) {
                 if (this.game.getPlayerFieldValueAt(i, p) >= 1 &&  this.game.getPlayerFieldValueAt(i, p) <= 4) {
@@ -155,32 +156,35 @@ public class MyPanel extends JPanel {
                 }
             }
         }
+
         for (int i = 0; i < 10; i++) {
             for (int p = 0; p < 10; p++) {
+                // проверка раненых, убитых кораблей и вставка бомбы для компьютера
                 if (game.getCompFieldValueAt(i, p) != 0) {
                     if (game.getCompFieldValueAt(i, p) >= 8 && game.getCompFieldValueAt(i, p) <= 11){
                         gr.drawImage(wounded, 100 + p * 30, 100 + i * 30, 30, 30, null);
-                    } else if (game.getCompFieldValueAt(i, p) >= 15){
+                    } else if (game.getCompFieldValueAt(i, p) >= 15) {
                         gr.drawImage(killed, 100 + p * 30, 100 + i * 30, 30, 30, null);
-                    } else if (game.getCompFieldValueAt(i, p) >= 5){
+                    } else if (game.getCompFieldValueAt(i, p) >= 5 || game.getCompFieldValueAt(i, p) == -2){
                         gr.drawImage(bomb, 100 + p * 30, 100 + i * 30, 30, 30, null);
                     }
 
                 }
+                //для игрока
                 if (game.getPlayerFieldValueAt(i, p) != 0) {
-                    if (game.getPlayerFieldValueAt(i, p) >= 8 && game.getPlayerFieldValueAt(i, p) <= 11){
+                    if (game.getPlayerFieldValueAt(i, p) >= 8 && game.getPlayerFieldValueAt(i, p) <= 11) {
                         gr.drawImage(wounded, 500 + p * 30, 100 + i * 30, 30, 30, null);
-                    } else if (game.getPlayerFieldValueAt(i, p) >= 15){
+                    } else if (game.getPlayerFieldValueAt(i, p) >= 15) {
                         gr.drawImage(killed, 500 + p * 30, 100 + i * 30, 30, 30, null);
-                    } else if (game.getPlayerFieldValueAt(i, p) >= 5){
+                    } else if (game.getPlayerFieldValueAt(i, p) >= 5) {
                         gr.drawImage(bomb, 500 + p * 30, 100 + i * 30, 30, 30, null);
                     }
-
                 }
 
             }
         }
 
+        // отрисовка полей
         gr.setColor(Color.BLUE);
         for (int i = 0; i <= 10; i++) {
             gr.drawLine(100 + i * 30, 100, 100 + i * 30, 400);
@@ -190,9 +194,9 @@ public class MyPanel extends JPanel {
             gr.drawLine(500, 100 + i * 30, 800, 100 + i * 30);
         }
 
+        // отрисовка букв и цифр - координат
         gr.setFont(new Font("serif", 0, 20));
         gr.setColor(Color.RED);
-
         for (int i = 1; i <= 10; i++) {
             gr.drawString(String.valueOf(i), 73, 93 + i * 30);
             gr.drawString(String.valueOf(i), 473, 93 + i * 30);
@@ -222,4 +226,4 @@ public class MyPanel extends JPanel {
     }
 }
 
-   }
+

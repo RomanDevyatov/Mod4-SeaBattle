@@ -57,12 +57,6 @@ public class Game {
         make1(masPlayer);
     }
 
-    private void setMasValue(int[][] mas, int i, int p, int val) {
-        if (testMasPoz(i, p)) {
-            mas[i][p] = val;
-        }
-    }
-
     private void make1(int[][] mas) {
         for (int k = 1; k <= 4; k++) {
             while (true) {
@@ -138,13 +132,19 @@ public class Game {
         okrEnd(mas);
     }
 
-    public void shotPlayer(int j, int i) {
+    private void setMasValue(int[][] mas, int i, int p, int val) {
+        if (testMasPoz(i, p)) {
+            mas[i][p] = val;
+        }
+    }
+
+    public void shootPlayer(int j, int i) {
         masComp[i][j] += 7;
         testUbit(masComp, i, j);
         testEndGame();
         if (masComp[i][j] < 8) {
             compTurn = true;
-            while (compTurn == true) {
+            while (compTurn) {
                 compTurn = shootComp();
             }
         }
@@ -187,6 +187,70 @@ public class Game {
                 }
             }
         }
+    }
+
+    private boolean shootComp() {
+        boolean priznakPopad = false;
+        boolean ranenExists = false;
+        boolean isShoot = false;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                // поиск раненого корабля
+                if (masPlayer[i][j] >= 9 && masPlayer[i][j] <= 11) {
+                    ranenExists = true;
+                    for (int k = i - 1; k < i + 2; k++) {
+                        for (int s = j - 1; s < j + 2; s++) {
+                            if (testMasPoz(k, s) && masPlayer[k][s] <= 4 && masPlayer[k][s] != -2) {
+                                masPlayer[k][s] += 7;
+                                testUbit(masPlayer, k, s);
+                                if (masPlayer[k][s] >= 8) {
+                                    priznakPopad = true;
+                                }
+                                isShoot = true;
+                                k = i + 50;
+                                s = j + 50;
+                            }
+                        }
+                    }
+                }
+                if (isShoot) {
+                    i = 11;
+                    j = 11;
+                }
+            }
+        }
+
+        if (ranenExists == false) { // если нет раненого - стреляем
+            for (int k = 1; k <= 50; k++) {
+                int i = (int) (Math.random() * 10);
+                int j = (int) (Math.random() * 10); // -1 0 1 2 3 4
+                if (masPlayer[i][j] <= 4 && masPlayer[i][j] != -2) {
+                    masPlayer[i][j] += 7;
+                    testUbit(masPlayer, i, j);
+                    if (masPlayer[i][j] >= 8) {
+                        priznakPopad = true;
+                    }
+                    isShoot = true;
+                    break;
+                }
+            }
+            if (!isShoot) {
+                for (int i = 0; i < 10; i++) {
+                    for (int j = 0; j < 10; j++) {
+                        if (masPlayer[i][j] <= 4 && masPlayer[i][j] != -2) {
+                            masPlayer[i][j] += 7;
+                            testUbit(masPlayer, i, j);
+                            if (masPlayer[i][j] >= 8) {
+                                priznakPopad = true;
+                            }
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        testEndGame();
+        return priznakPopad;
     }
 
     private void make4(int[][] mas) {
@@ -302,68 +366,11 @@ public class Game {
     private void okrPodbit(int[][] mas, int i, int j) {
         for (int k = i - 1; k < i + 2; k++) {
             for (int s = j - 1; s < j + 2; s++) {
-                if (k != s) {
+                if (!(k == i && s == j)) {
                     setOkrPodbit(mas, k, s);
                 }
             }
         }
-    }
-
-    private boolean shootComp() {
-        boolean res = false;
-        boolean flag = false;
-        for (int i = 0; i < 10; i++) {
-            for (int j = 0; j < 10; j++) {
-                if (masPlayer[i][j] >= 9 && masPlayer[i][j] <= 11) {
-                    flag = true;
-                    for (int k = i - 1; k < i + 2; k++) {
-                        for (int s = j - 1; s < j + 2; s++) {
-                            if (Math.abs(k - s) == 1 && testMasPoz(k, s) && masPlayer[k][s] <= 4 && masPlayer[k][s] != -2) {
-                                masPlayer[k][s] += 7;
-                                testUbit(masPlayer, k, s);
-                                if (masPlayer[k][s] >= 8) {
-                                    res = true;
-                                }
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!flag) {
-            for (int k = 1; k <= 100; k++) {
-                int i = (int) (Math.random() * 10);
-                int j = (int) (Math.random() * 10);
-                if (masPlayer[i][j] <= 4 && masPlayer[i][j] != -2) {
-                    masPlayer[i][j] += 7;
-                    testUbit(masPlayer, i, j);
-                    if (masPlayer[i][j] >= 8) {
-                        res = true;
-                    }
-                    flag = true;
-                    break;
-                }
-            }
-            if (!flag) {
-                for (int i = 0; i < 10; i++) {
-                    for (int j = 0; j < 10; j++) {
-                        if (masPlayer[i][j] <= 4 && masPlayer[i][j] != -2) {
-                            masPlayer[i][j] += 7;
-                            testUbit(masPlayer, i, j);
-                            if (masPlayer[i][j] >= 8) {
-                                res = true;
-                            }
-                            flag = true;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        testEndGame();
-        return res;
     }
 
     private boolean testMasPoz(int i, int p) {
@@ -372,16 +379,6 @@ public class Game {
         } else {
             return false;
         }
-    }
-
-    private int[] makeShot() {
-        int i = (int) (Math.random() * 10);
-        int j = (int) (Math.random() * 10);
-        int[] mas = new int[2];
-        mas[0] = i;
-        mas[1] = j;
-
-        return mas;
     }
 
     private void testEndGame(){
